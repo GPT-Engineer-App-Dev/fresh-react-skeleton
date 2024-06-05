@@ -1,17 +1,26 @@
 import { Box, Container, Flex, Text, VStack, Link, Spacer, IconButton, Input, Button } from "@chakra-ui/react";
 import { FaHome, FaInfoCircle } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSupabaseAuth } from "../integrations/supabase/auth.jsx";
 
 const Index = () => {
   const { session, logout } = useSupabaseAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [authenticatedContent, setAuthenticatedContent] = useState(null);
 
   const handleLogin = async () => {
     // Implement login logic here
     console.log("Logging in with", email, password);
   };
+
+  useEffect(() => {
+    if (session) {
+      setAuthenticatedContent("This is some secret content that only authenticated users can see.");
+    } else {
+      setAuthenticatedContent(null);
+    }
+  }, [session]);
 
   return (
     <Container maxW="container.lg">
@@ -65,6 +74,19 @@ const Index = () => {
             <Button colorScheme="blue" onClick={logout}>
               Logout
             </Button>
+          )}
+          {authenticatedContent && (
+            <Box
+              padding={4}
+              borderWidth={1}
+              borderRadius="md"
+              boxShadow="md"
+              bg="green.100"
+              width={{ base: "100%", md: "50%" }}
+              textAlign="center"
+            >
+              <Text>{authenticatedContent}</Text>
+            </Box>
           )}
         </VStack>
       </Box>
